@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生的列表页</title>
+    <link rel="stylesheet" href="/element-ui-2.13.2.css">
+    <script src="/vue.js"></script>
+    <script src="/element-ui-2.13.2.js"></script>
+    <script src="/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <template>
+        <el-table
+                :data="tableData"
+                style="width: 100%">
+            <el-table-column
+                    prop="studentId"
+                    label="学号"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="studentName"
+                    label="学生姓名"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="studentSex" :formatter="formatRole"
+                    label="学生性别">
+            </el-table-column>
+            <el-table-column
+                    prop="studentPhone"
+                    label="学生手机号">
+            </el-table-column>
+            <el-table-column
+                    prop="studentCardId"
+                    label="身份证号">
+            </el-table-column>
+            <el-table-column
+                    prop="studentAddress"
+                    label="学生地址">
+            </el-table-column>
+            <el-table-column
+                    prop="studentComeDate"
+                    label="学生入学时间">
+            </el-table-column>
+        </el-table>
+    </template>
+</div>
+
+<script>
+    var vm  = new Vue({
+        el:"#app",
+        data:{
+            tableData: []
+
+
+        },
+        methods:{
+            formatRole:function (row, column) {
+                return row.studentSex == '1' ? "男" : row.studentSex == '0' ? "女" : "aaa";
+            },
+        },
+        created:function () {
+            // 页面一加载就要访问url  /student/selectAll
+            axios.get("/student/selectAll").then( res=>{
+                console.log(res)
+                // 把 json 数组 赋值给  tableData
+                this.tableData=res.data.data
+            } );
+        }
+    });
+</script>
+</body>
+</html>
