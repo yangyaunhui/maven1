@@ -3,14 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>学生的列表页</title>
-    <link rel="stylesheet" href="/element-ui-2.13.2.css">
+    <!--<link rel="stylesheet" href="/element-ui-2.13.2.css">-->
     <script src="/vue.js"></script>
-    <script src="/element-ui-2.13.2.js"></script>
+    <!--<script src="/element-ui-2.13.2.js"></script>-->
     <script src="/axios.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 <body>
 <div id="app">
+
     <template>
+        <div>
+                <el-input v-model="student.studentName" placeholder="请输入内容" style="width: 20%"></el-input>
+                <el-select v-model="student.studentSex" placeholder="请选择">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            {{student.studentSex}}
+
+            <el-button type="success" @click="searchBtn">搜&nbsp;&nbsp;索</el-button>
+        </div>
+
+
+
+            <div>
         <el-table
                 :data="tableData"
                 style="width: 100%">
@@ -45,6 +68,18 @@
                     label="学生入学时间">
             </el-table-column>
         </el-table>
+        </div>
+        <div class="block">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[10, 20, 30, 40]"
+                    :page-size="10"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total">
+            </el-pagination>
+        </div>
     </template>
 </div>
 
@@ -52,23 +87,67 @@
     var vm  = new Vue({
         el:"#app",
         data:{
-            tableData: []
+            tableData: [],
+            currentPage:1,
+            page:1,
+            limiy:10,
+            total:0,
 
+            options: [{
+                value: '1',
+                label: '男生'
+            }, {
+                value: '0',
+                label: '女生'
+            }],
 
+            student: {
+                studentName:"",
+                studentSex:"",
+                studentComeDate:""
+
+            }
         },
+
         methods:{
+            searchBtn:function(){
+                console.log("发送axiios")
+                this.loadTable(this.page,this.limit);
+            },
+
             formatRole:function (row, column) {
                 return row.studentSex == '1' ? "男" : row.studentSex == '0' ? "女" : "aaa";
             },
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                this.loadTable(this.page,val)
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                this.loadTable(val,this.limit)
+            },
+            loadTable:function(page,limit){
+                axios.get("/student/selectPageAll",{
+                             params:{
+                                 page:page,
+                                 limit:limit,
+                                 studentSex:this.student.studentSex,
+                                 studentName:this.student.studentName
+                             }
+                         }).then( res=>{
+                             console.log(res)
+                             // 把 json 数组 赋值给  tableData
+                             this.tableData=res.data.data.list;
+                             this.total=res.data.data.total;
+                         });
+            }
         },
-        created:function () {
-            // 页面一加载就要访问url  /student/selectAll
-            axios.get("/student/selectAll").then( res=>{
-                console.log(res)
-                // 把 json 数组 赋值给  tableData
-                this.tableData=res.data.data
-            } );
+        created(){
+            this.loadTable(this.page,this.limit);
         }
+        // created:function () {
+        //     // 页面一加载就要访问url  /student/selectAll
+        // }
     });
 </script>
 </body>

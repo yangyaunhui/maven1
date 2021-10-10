@@ -1,10 +1,14 @@
 package com.xiexin.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xiexin.bean.Student;
+import com.xiexin.bean.StudentExample;
 import com.xiexin.respcode.Result;
 import com.xiexin.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,9 +28,27 @@ public class StudentController {
     }
 
     //分页查询(带参数)
-    @RequestMapping("/selectPageAll")
-    public Result selectPageAll(){
+    @RequestMapping("/selectPageAll") // /student/selectPageAll
+    public Result selectPageAll(Integer studentSex, String studentName,@RequestParam(value = "page",defaultValue = "1",required = true) Integer page,
+                                @RequestParam(value = "limit",defaultValue = "10",required = true)Integer pageSize) {
+        System.out.println("studentSex = " + studentSex);
+        StudentExample example = new StudentExample();
+        StudentExample.Criteria criteria = example.createCriteria();
 
-        return null;
+        //使用pagehelper分页
+        PageHelper.startPage(page, pageSize);
+
+        if (null != studentName&& !"".equals(studentName)) {
+            criteria.andStudentNameEqualTo(studentName);
+        }
+
+        if (null != studentSex&& !"".equals(studentSex)) {
+            criteria.andStudentSexEqualTo(studentSex);
+            }
+
+        List<Student> students = studentService.selectByExample(example);//select * from student
+        PageInfo pageInfo = new PageInfo(students);
+        Result result = new Result(pageInfo);
+        return result;
     }
 }

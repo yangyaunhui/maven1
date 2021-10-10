@@ -1,6 +1,8 @@
 package com.xiexin.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,6 +11,8 @@ import java.util.Date;
  * student
  * @author 
  */
+@ToString //lombok的插件注解,不用写tostring
+@Data //不用写get set...@Getter不用写getter @Setter,不用写setter
 public class Student implements Serializable {
     private Integer studentId;
 
@@ -26,59 +30,4 @@ public class Student implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Integer getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Integer studentId) {
-        this.studentId = studentId;
-    }
-
-    public String getStudentName() {
-        return studentName;
-    }
-
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
-
-    public Integer getStudentSex() {
-        return studentSex;
-    }
-
-    public void setStudentSex(Integer studentSex) {
-        this.studentSex = studentSex;
-    }
-
-    public String getStudentCardId() {
-        return studentCardId;
-    }
-
-    public void setStudentCardId(String studentCardId) {
-        this.studentCardId = studentCardId;
-    }
-
-    public String getStudentPhone() {
-        return studentPhone;
-    }
-
-    public void setStudentPhone(String studentPhone) {
-        this.studentPhone = studentPhone;
-    }
-
-    public String getStudentAddress() {
-        return studentAddress;
-    }
-
-    public void setStudentAddress(String studentAddress) {
-        this.studentAddress = studentAddress;
-    }
-
-    public Date getStudentComeDate() {
-        return studentComeDate;
-    }
-
-    public void setStudentComeDate(Date studentComeDate) {
-        this.studentComeDate = studentComeDate;
-    }
 }
