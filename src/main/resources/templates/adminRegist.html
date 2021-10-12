@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="/vue.js"></script>
+    <!-- <script src="/element-ui-2.13.2.js"></script>-->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <div>
+    <el-col :span="4">
+   用户名：<el-input v-model="admin.adminName" placeholder="请输入内容"></el-input>
+ </el-col>
+
+    <el-col :span="4">
+     密码：<el-input v-model="admin.adminPwd" placeholder="请输入内容"></el-input>
+</el-col>
+
+            <el-col :span="4">
+   账号: <el-input v-model="admin.adminAccount" placeholder="请输入内容"></el-input>
+ </el-col>
+
+
+    <br><br><br><br>
+    <el-button type="success" @click="searchBtn">注&nbsp;&nbsp;册</el-button>
+    </div>
+    <div>
+    <el-table
+            :data="tableData"
+            style="width: 100%">
+        <el-table-column
+                prop="adminName"
+                label="用户名"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="adminPwd"
+                label="密码"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="adminPhone"
+                label="手机号"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="adminAccount"
+                label="账户名"
+        >
+
+        </el-table-column>
+        <el-table-column
+                prop="salt"
+                label="盐"
+               >
+        </el-table-column>
+        <el-table-column
+                prop="tiwen"
+                label="体温"
+               >
+        </el-table-column>
+        <el-table-column
+                prop="status"
+                label="状态">
+        </el-table-column>
+    </el-table>
+</div>
+</div>
+<script>
+    var vm=new Vue({
+        el:'#app',
+        data:{
+            tableData:[],
+            admin:{
+                adminName:'',
+                adminPwd:'',
+                adminAccount:'',
+            }
+        },
+        methods:{
+            searchBtn:function () {
+                axios.get("/admin/insert",{
+                    params:{
+                        adminName:this.admin.adminName,
+                        adminPwd:this.admin.adminPwd,
+                        adminAccount:this.admin.adminAccount
+                    }
+                }).then(res=>{
+                    console.log(res);
+                    this.loadTable();
+
+                })
+            },
+            loadTable:function () {
+                axios.get("/admin/selectAll").then(res=>{
+                    console.log(res)
+                    this.tableData=res.data.data;
+            })
+            }
+        },
+        created:function () {
+
+            this.loadTable();
+        }
+    })
+</script>
+</body>
+</html>

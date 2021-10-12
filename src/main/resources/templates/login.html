@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <script type="text/javascript" src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        账户:<input type="text" v-model="account"><br>
+        密码:<input type="password" v-model="pwd"><br>
+        <button @click="login">登录</button>
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el:'#app',
+            data:{
+                account:'',
+                pwd:''
+            },
+            methods:{
+                login:function () {
+                    console.log(this.pwd)
+                    console.log(this.account)
+                    //调用axios发送到后台
+                    axios.post("/admin/loginByShiro",{
+                        adminAccount:this.account,
+                        adminPwd:this.pwd
+                    }).then(res=>{
+                        console.log(res)
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

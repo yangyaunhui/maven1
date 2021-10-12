@@ -23,6 +23,20 @@ public class Admin implements Serializable {
 
     private Integer status;
 
+    @Override
+    public String toString() {
+        return "Admin{" +
+                "adminId=" + adminId +
+                ", adminName='" + adminName + '\'' +
+                ", adminPwd='" + adminPwd + '\'' +
+                ", adminPhone='" + adminPhone + '\'' +
+                ", adminAccount='" + adminAccount + '\'' +
+                ", salt='" + salt + '\'' +
+                ", tiwen=" + tiwen +
+                ", status=" + status +
+                '}';
+    }
+
     private static final long serialVersionUID = 1L;
 
     public Integer getAdminId() {
