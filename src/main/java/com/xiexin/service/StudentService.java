@@ -1,6 +1,7 @@
 package com.xiexin.service;
 
 import com.xiexin.bean.Student;
+import com.xiexin.bean.StudentDTO;
 import com.xiexin.bean.StudentExample;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,4 +31,5 @@ public interface StudentService {
 
     int updateByPrimaryKey(Student record);
 
+    int insertSelectiveDTO(StudentDTO student);
 }

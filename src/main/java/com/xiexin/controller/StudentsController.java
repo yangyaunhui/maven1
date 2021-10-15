@@ -2,11 +2,9 @@ package com.xiexin.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xiexin.bean.Student;
-import com.xiexin.bean.StudentDTO;
-import com.xiexin.bean.StudentExample;
+import com.xiexin.bean.*;
 import com.xiexin.respcode.Result;
-import com.xiexin.service.StudentService;
+import com.xiexin.service.StudentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,26 +14,26 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/student")
-public class StudentController {
+@RequestMapping("/students")
+public class StudentsController {
     @Autowired
-    private StudentService studentService;
+    private StudentsService studentsService;
     //全查 注意:不用map 公司中都用一个类,好几个类组成的类叫做
     //统一响应类,每个公司都不一样
-    @RequestMapping("/selectAll") // /student/selectAll
+    @RequestMapping("/selectAll") // /students/selectAll
     public Result selectAll(){
-        List<Student> students = studentService.selectByExample(null);//select * from student
+        List<Students> students = studentsService.selectByExample(null);//select * from student
         Result result = new Result(students);
         return result;
     }
 
     //分页查询(带参数)
-    @RequestMapping("/selectPageAll") // /student/selectPageAll
+    @RequestMapping("/selectPageAll") // /students/selectPageAll
     public Result selectPageAll(Integer studentSex, String studentName,@RequestParam(value = "page",defaultValue = "1",required = true) Integer page,
                                 @RequestParam(value = "limit",defaultValue = "10",required = true)Integer pageSize) {
         System.out.println("studentSex = " + studentSex);
-        StudentExample example = new StudentExample();
-        StudentExample.Criteria criteria = example.createCriteria();
+        StudentsExample example = new StudentsExample();
+        StudentsExample.Criteria criteria = example.createCriteria();
 
         //使用pagehelper分页
         PageHelper.startPage(page, pageSize);
@@ -48,17 +46,17 @@ public class StudentController {
             criteria.andStudentSexEqualTo(studentSex);
             }
 
-        List<Student> students = studentService.selectByExample(example);//select * from student
+        List<Students> students = studentsService.selectByExample(example);//select * from student
         PageInfo pageInfo = new PageInfo(students);
         Result result = new Result(pageInfo);
         return result;
     }
 
     //修改
-    @RequestMapping("/updateOne") // /student/updateOne
-    public Result updateOne(@RequestBody Student student){
-        System.out.println("student = " + student);
-        int i = studentService.updateByPrimaryKeySelective(student);
+    @RequestMapping("/updateOne") // /students/updateOne
+    public Result updateOne(@RequestBody Students students){
+        System.out.println("students = " + students);
+        int i = studentsService.updateByPrimaryKeySelective(students);
         if (i == 1) {
             return new Result();
         }else{
@@ -68,10 +66,10 @@ public class StudentController {
 
     //增
     // 后端订单增加 -- 针对layui的 针对前端传 json序列化的
-    @RequestMapping("/insert")
-    public  Result  insert(@RequestBody StudentDTO student){ // orders 对象传参, 规则: 前端属性要和后台的属性一致!!!
-        System.out.println("student = " + student);
-        int i =  studentService.insertSelectiveDTO(student);
+    @RequestMapping("/insert") // /students/insert
+    public  Result  insert(@RequestBody StudentsDTO students){ // orders 对象传参, 规则: 前端属性要和后台的属性一致!!!
+        System.out.println("students = " + students);
+        int i =  studentsService.insertSelectiveDTO(students);
         if(i==1){
             return new Result();
         }else{
@@ -80,9 +78,9 @@ public class StudentController {
     }
 
     //删除
-    @RequestMapping("/deleteOne")
+    @RequestMapping("/deleteOne") // /students/deleteOne
     public Result deleteOne(@RequestParam(value = "studentId",required = false) Integer studentId){
-        int i = studentService.deleteByPrimaryKey(studentId);
+        int i = studentsService.deleteByPrimaryKey(studentId);
         if(i==1){
             return new Result(0,"删除成功");
         }else{

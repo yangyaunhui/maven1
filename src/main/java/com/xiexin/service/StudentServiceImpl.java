@@ -1,6 +1,7 @@
 package com.xiexin.service;
 
 import com.xiexin.bean.Student;
+import com.xiexin.bean.StudentDTO;
 import com.xiexin.bean.StudentExample;
 import com.xiexin.dao.StudentDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,11 @@ public class StudentServiceImpl implements StudentService{
 	public int updateByPrimaryKey(Student record){
     	return studentDAO.updateByPrimaryKey(record);
     }
+
+	@Override
+	public int insertSelectiveDTO(StudentDTO student) {
+		return studentDAO.insertSelectiveDTO(student);
+	}
 
 
 }

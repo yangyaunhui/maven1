@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service("adminService")
 public class AdminServiceImpl implements AdminService {
@@ -55,6 +56,11 @@ public class AdminServiceImpl implements AdminService {
 	public int updateByPrimaryKey(Admin record){
     	return adminDAO.updateByPrimaryKey(record);
     }
+
+	@Override
+	public List<Map> selectMore(Map map) {
+		return adminDAO.selectMore(map);
+	}
 
 
 }

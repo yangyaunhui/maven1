@@ -65,6 +65,13 @@
                     </div>
                 </el-form-item>
 
+                <el-form-item label="角色Id" :label-width="formLabelWidth">
+                    <el-radio-group v-model="studentByEdit.jiaoSeId">
+                        <el-radio-button label="5" >学生</el-radio-button>
+                        <el-radio-button label="6" >班委</el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+
             </el-form>
 
             <div slot="footer" class="dialog-footer">
@@ -110,6 +117,13 @@
                                 :picker-options="pickerOptions">
                         </el-date-picker>
                     </div>
+                </el-form-item>
+
+                <el-form-item label="角色Id" :label-width="formLabelWidth">
+                    <el-radio-group v-model="studentByAdd.jiaoSeId">
+                        <el-radio-button label="5" >学生</el-radio-button>
+                        <el-radio-button label="6" >班委</el-radio-button>
+                    </el-radio-group>
                 </el-form-item>
 
             </el-form>
@@ -167,7 +181,7 @@
             <el-table-column
                     prop="studentPhone"
                     label="学生手机号"
-                    width="180">
+                    width="150">
             </el-table-column>
             <el-table-column
                     prop="studentCardId"
@@ -183,6 +197,16 @@
                     prop="studentComeDate"
                     label="学生入学时间"
                     width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="jiaoSeId"
+                    label="角色Id"
+                    width="120"
+                    :formatter="jiaose">
+                <!--<template scope="scope">-->
+                    <!--<span v-html="scope.row.jiaoSeId" v-if="scope.row.jiaoSeId=='6' " style="color: red"></span>-->
+                    <!--<span v-html="scope.row.jiaoSeId" v-if="scope.row.jiaoSeId =='5' " style="color: green"></span>-->
+                <!--</template>-->
             </el-table-column>
 
             <el-table-column label="操作">
@@ -239,7 +263,8 @@
             student: {
                 studentName:"",
                 studentSex:"",
-                studentComeDate:""
+                studentComeDate:"",
+                jiaoSeId:''
             },
             studentByEdit:{},
             studentByAdd:{},
@@ -291,9 +316,10 @@
                   }
             });
             },
+
             //修改
             updateStudent(){
-                axios.post('/student/updateOne',
+                axios.post('/students/updateOne',
                     this.studentByEdit).then(res=>{
                     console.log(res);
                     if(res.data.code==20000 ){
@@ -314,8 +340,10 @@
                 alert("添加")
                 this.addFormVisible =true;
             },
+
+            //增加数据
             addStudent:function(){
-                axios.post("/student/insert",
+                axios.post("/students/insert",
                     this.studentByAdd
                 ).then(res=>{
                     console.log(res)
@@ -337,6 +365,7 @@
                 console.log("发送axiios")
                 this.loadTable(this.page,this.limit);
             },
+
             //编辑
             handleEdit(index, row) {
                 console.log(index, row);
@@ -352,7 +381,7 @@
             //删除
             visible(index, row) {
                 alert("删除用户")
-                axios.get("/student/deleteOne",{
+                axios.get("/students/deleteOne",{
                     params:{
                         studentId:row.studentId
                     }
@@ -377,6 +406,19 @@
 
             },
 
+            //角色
+            jiaose:function (row ){
+                if(row.jiaoSeId == 5){
+                    return "学生"
+
+                }else if(row.jiaoSeId == 6) {
+                    return "班委"
+                }
+
+
+                // return row.jiaoSeId == '5' ? "学生" : row.jiaoSeId == '6' ? "班委" : "aaa";
+            },
+
             //性别
             formatRole:function (row, column) {
                 return row.studentSex == '1' ? "男" : row.studentSex == '0' ? "女" : "aaa";
@@ -391,7 +433,7 @@
                 this.loadTable(val,this.limit)
             },
             loadTable:function(page,limit){
-                axios.get("/student/selectPageAll",{
+                axios.get("/students/selectPageAll",{
                              params:{
                                  page:page,
                                  limit:limit,

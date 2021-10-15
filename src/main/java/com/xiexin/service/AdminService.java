@@ -5,6 +5,7 @@ import com.xiexin.bean.AdminExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AdminService {
    
@@ -29,5 +30,10 @@ public interface AdminService {
     int updateByPrimaryKeySelective(Admin record);
 
     int updateByPrimaryKey(Admin record);
+
+    //五张表权限连续查询
+    //N张表的返回值 list<map>
+    //参数Map
+    List<Map> selectMore(Map map);
 
 }

@@ -1,10 +1,16 @@
 package com.xiexin.shiro;
 
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,6 +43,7 @@ public class ShiroConfig {
     public DefaultWebSecurityManager getSecurityManager (Realm realm){
          DefaultWebSecurityManager sm= new DefaultWebSecurityManager();
          sm.setRealm(realm);
+         sm.setRememberMeManager(cookieRememberMeManager());
          return sm;
     }
     // 3.subject需要用过滤器来获取
@@ -47,12 +54,62 @@ public class ShiroConfig {
         // 使用 过滤器
         Map map = new LinkedHashMap<>(); // 这个map是有序的
         // 不拦截的页面！！！
+        map.put("/vue.js","anon");  // anon匿名的,任何请求都可以去访问
+        map.put("/axios.min.js","anon");  // anon匿名的,任何请求都可以去访问
+        map.put("/page/studentList","anon");  // anon匿名的,任何请求都可以去访问
+        map.put("/page/studentsList","anon");  // anon匿名的,任何请求都可以去访问
         map.put("/page/login","anon");  // anon匿名的,任何请求都可以去访问
         map.put("/admin/loginByShiro","anon"); //登录的方法也不拦截
+        map.put("/page/reg","anon");  // anon匿名的,任何请求都可以去访问
+        map.put("/admin/reg","anon"); //注册的方法也不拦截
         map.put("/*/**","authc");   // authc 需要登录
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map); // 把拦截的顺序放入到linkedmap中
         return shiroFilterFactoryBean;
     }
 
+    //开启aop的权限支持
+    /**
+     * 开启shiro aop注解支持.
+     * 使用代理方式;所以需要开启代码支持;
+     * @Author:      谢欣
+     * @UpdateUser:
+     * @Version:     0.0.1
+     * @param securityManager
+     * @return       org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
+     * @throws
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(org.apache.shiro.mgt.SecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        return defaultAdvisorAutoProxyCreator;
+    }
+    @Bean
+    public ShiroDialect shiroDialect() {
+        return new ShiroDialect();
+    }
 
+    //记住我的功能,需要依赖于cookie
+    @Bean
+    public CookieRememberMeManager cookieRememberMeManager(){
+        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+        cookieRememberMeManager.setCookie(remeberMeCookie());
+        return cookieRememberMeManager;
+    }
+
+    //记住我的cookie
+    @Bean
+    public SimpleCookie remeberMeCookie(){
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        //设置cookie的时间
+        simpleCookie.setMaxAge(60*60*24*30);
+        return simpleCookie;
+    }
 }

@@ -263,4 +263,21 @@
       `status` = #{status,jdbcType=INTEGER}
     where admin_id = #{adminId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectMore" resultType="map" parameterType="map">
+      select a.admin_name adminName, a.admin_account adminAccount,
+          js.jiao_se_name roleName, qx.quan_xian_name qxName,
+          qx.quan_xian_perms qxPerms, qx.quan_xian_url qxUrl
+          from admin a
+          left join ren_jiao_se rjs on rjs.ren_id=a.admin_id
+          left join jiao_se js on js.jiao_se_id = rjs.jiaose_id
+          join jiaose_quanxian jq on jq.jiaose_id = js.jiao_se_id
+          join quan_xian qx on qx.quan_xian_id = jq.quanxian_id
+      <where>
+        <if test="adminAccount!=null and adminAccount!='' ">
+        and a.admin_account = #{adminAccount}
+        </if>
+      </where>
+  </select>
+
 </mapper>
